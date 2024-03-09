@@ -43,8 +43,8 @@ def push_to_hbase(hbase_connection, updated_msg):
     data = {
         b'st:pc': str(post_code).encode(),
         b'st:tdt': txn_time.encode(),
-        b'bt:score': score.encode(),
-        b'bt:ucl': ucl.encode()
+        b'bt:score': str(score).encode(),
+        b'bt:ucl': str(ucl).encode()
     }
     hbase_connection.write_data(bin(updated_msg['card_id']), data, "lookup_test")
 
