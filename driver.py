@@ -78,7 +78,7 @@ def execute():
         incoming_msg['last_txn_time'] = txn_time
         incoming_msg['ucl'] = ucl
         print(incoming_msg)
-        if check_if_fraud(credit_score) and check_ucl(ucl) and check_distance(last_postcode,incoming_msg['postcode']):
+        if check_if_fraud(credit_score) and check_ucl(ucl,incoming_msg['amount']) and check_distance(last_postcode,incoming_msg['postcode']):
             post_code = incoming_msg['postcode']
             txn_time = incoming_msg['transaction_dt']
             data = {
@@ -86,15 +86,18 @@ def execute():
                 b'st:tdt': txn_time.encode()
             }
             push_to_hbase(hbase_connection, 'look_test', data)
+            break
         else:
             #Fraud TXN -> update into card_transaction table
             post_code = incoming_msg['postcode']
             txn_time = incoming_msg['transaction_dt']
+            #TODO
             data = {
                 b'st:pc': str(post_code).encode(),
                 b'st:tdt': txn_time.encode()
             }
             push_to_hbase(hbase_connection, 'card_transactions_test', data)
+            break
 
 
 
