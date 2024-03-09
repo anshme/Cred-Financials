@@ -42,9 +42,7 @@ def push_to_hbase(hbase_connection, updated_msg):
     ucl = updated_msg['ucl']
     data = {
         b'st:pc': str(post_code).encode(),
-        b'st:tdt': txn_time.encode(),
-        b'bt:score': str(score).encode(),
-        b'bt:ucl': str(ucl).encode()
+        b'st:tdt': txn_time.encode()
     }
     hbase_connection.write_data(bin(updated_msg['card_id']), data, "lookup_test")
 
@@ -79,8 +77,9 @@ def execute():
         if check_if_fraud(credit_score):
             print(incoming_msg)
             push_to_hbase(hbase_connection, incoming_msg)
-            break
+
         break
+
         # incoming_msg['distance'] = get_distance(geo, incoming_msg['last_postcode'], incoming_msg['postcode'])
         # incoming_msg['time_diff'] = get_time_difference(incoming_msg['last_txn_time'],
         #                                                 incoming_msg['transaction_dt'])
