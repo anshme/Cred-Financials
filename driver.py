@@ -50,18 +50,17 @@ def execute():
 
     consumer = kafka_consumer(conf['kafka'])
     for msg in consumer:
-        incoming_msg = json.load(msg.value)
-        last_postcode, credit_score, txn_time, ucl = get_details_from_last_txn(hbase_connection,
-                                                                               incoming_msg['card_id'],
-                                                                               "lookup")
-        incoming_msg['last_postcode'] = last_postcode
-        incoming_msg['credit_score'] = int(credit_score)
-        incoming_msg['last_txn_time'] = txn_time
-        incoming_msg['ucl'] = ucl
-        incoming_msg['distance'] = get_distance(geo, incoming_msg['last_postcode'], incoming_msg['postcode'])
-        incoming_msg['time_diff'] = get_time_difference(incoming_msg['last_txn_time'],
-                                                        incoming_msg['transaction_dt'])
-        print(incoming_msg)
+        print(msg.value)
+        # last_postcode, credit_score, txn_time, ucl = get_details_from_last_txn(hbase_connection,
+        #                                                                        incoming_msg['card_id'],
+        #                                                                        "lookup")
+        # incoming_msg['last_postcode'] = last_postcode
+        # incoming_msg['credit_score'] = int(credit_score)
+        # incoming_msg['last_txn_time'] = txn_time
+        # incoming_msg['ucl'] = ucl
+        # incoming_msg['distance'] = get_distance(geo, incoming_msg['last_postcode'], incoming_msg['postcode'])
+        # incoming_msg['time_diff'] = get_time_difference(incoming_msg['last_txn_time'],
+        #                                                 incoming_msg['transaction_dt'])
 
 
 if __name__ == '__main__':
