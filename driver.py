@@ -12,12 +12,15 @@ from kafka_consumer import kafka_consumer
 speed_threshold = 0.25
 score_threshold = 200
 
+
 def get_time_difference(timestamp1, timestamp2):
     format = "%d-%m-%Y %H:%M:%S"
     datetime1 = datetime.strptime(timestamp1, format)
     datetime2 = datetime.strptime(timestamp2, format)
     difference = datetime2 - datetime1
     return difference
+
+
 def get_distance(geo, src_postcode, dest_postcode):
     source_lat = geo.get_lat(src_postcode)
     source_long = geo.get_lat(src_postcode)
@@ -29,14 +32,16 @@ def get_distance(geo, src_postcode, dest_postcode):
 
 def get_details_from_last_txn(hbase_connection, card_id, table_name):
     row = hbase_connection.get_data(key=str.encode(card_id), table=table_name)
-    return row.get(b'bt:score')
+    return row.get(b'st:pc').decode('utf-8'), row.get(b'bt:score').decode('utf-8'), row.get(b'bt:ucl').decode('utf-8'), row.get(b'st:tdt').decode('utf-8')
 
 
 def psuh_to_hbase():
     pass
 
+
 def check_if_fraud():
     pass
+
 
 def execute():
     # hbase_connection = dao.HBaseDao()
@@ -75,7 +80,8 @@ def execute():
         # Close the consumer
         consumer.close()
 
+
 if __name__ == '__main__':
     # execute()
     hbase_connection = dao.HBaseDao()
-    print(get_details_from_last_txn(hbase_connection,'348684315090900','lookup'))
+    print(get_details_from_last_txn(hbase_connection, '348684315090900', 'lookup'))
