@@ -35,13 +35,8 @@ def get_details_from_last_txn(hbase_connection, card_id, table_name):
     return row.get(b'st:pc'), row.get(b'bt:score'), row.get(b'bt:ucl'), row.get(b'st:tdt')
 
 
-def push_to_hbase(hbase_connection, updated_msg):
-    post_code = updated_msg['postcode']
-    txn_time = updated_msg['transaction_dt']
-    data = {
-        b'st:pc': str(post_code).encode(),
-        b'st:tdt': txn_time.encode()
-    }
+def push_to_hbase(hbase_connection, table, data):
+
     hbase_connection.write_data(str(updated_msg['card_id']).encode(), data, "lookup_test")
 
 
@@ -51,6 +46,18 @@ def check_if_fraud(credit_score):
     else:
         return False
 
+
+def check_ucl(ucl, amount):
+    if amount < int(ucl):
+        return True
+    else:
+        return False
+
+
+def check_distance(last_postcode, curr_postcode):
+    return True
+
+def update_card_transaction_table()
 
 def execute():
     hbase_connection = dao.HBaseDao()
@@ -71,11 +78,25 @@ def execute():
         incoming_msg['last_txn_time'] = txn_time
         incoming_msg['ucl'] = ucl
         print(incoming_msg)
-        if check_if_fraud(credit_score):
-            print(incoming_msg)
-            push_to_hbase(hbase_connection, incoming_msg)
+        if check_if_fraud(credit_score) and check_ucl(ucl) and check_distance(last_postcode,incoming_msg['postcode']):
+            post_code = incoming_msg['postcode']
+            txn_time = incoming_msg['transaction_dt']
+            data = {
+                b'st:pc': str(post_code).encode(),
+                b'st:tdt': txn_time.encode()
+            }
+            push_to_hbase(hbase_connection, 'look_test', data)
+        else:
+            #Fraud TXN -> update into card_transaction table
+            post_code = incoming_msg['postcode']
+            txn_time = incoming_msg['transaction_dt']
+            data = {
+                b'st:pc': str(post_code).encode(),
+                b'st:tdt': txn_time.encode()
+            }
+            push_to_hbase(hbase_connection, 'card_transactions_test', data)
 
-        break
+
 
         # incoming_msg['distance'] = get_distance(geo, incoming_msg['last_postcode'], incoming_msg['postcode'])
         # incoming_msg['time_diff'] = get_time_difference(incoming_msg['last_txn_time'],
