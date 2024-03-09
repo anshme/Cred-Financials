@@ -18,12 +18,13 @@ def get_time_difference(timestamp1, timestamp2):
     datetime1 = datetime.strptime(timestamp1, format1)
     datetime2 = datetime.strptime(timestamp2, format1)
     difference = datetime2 - datetime1
-    return difference
+    time_difference_seconds = difference.total_seconds()
+    return time_difference_seconds
 
 
 def get_distance(geo, src_postcode, dest_postcode):
     source_lat = geo.get_lat(src_postcode)
-    source_long = geo.get_lat(src_postcode)
+    source_long = geo.get_long(src_postcode)
     destination_lat = geo.get_lat(dest_postcode)
     destination_long = geo.get_long(dest_postcode)
     distance = geo.distance(source_lat, source_long, destination_lat, destination_long)
@@ -53,8 +54,15 @@ def check_ucl(ucl, amount):
         return False
 
 
-def check_distance(last_postcode, curr_postcode):
-    return True
+def check_distance(geo, last_postcode, curr_postcode, last_tdt, curr_tdt):
+    distance = get_distance(geo, last_postcode, curr_postcode)
+    time = get_time_difference(last_tdt, curr_tdt)
+    speed = distance/time
+
+    if speed > speed_threshold:
+        return True
+    else:
+        return False
 
 
 def execute():
@@ -76,9 +84,8 @@ def execute():
         incoming_msg['last_txn_time'] = txn_time
         incoming_msg['ucl'] = ucl
         print(incoming_msg)
-        if check_if_fraud(credit_score) and check_ucl(ucl, incoming_msg['amount']) and check_distance(last_postcode,
-                                                                                                      incoming_msg[
-                                                                                                          'postcode']):
+        if check_if_fraud(credit_score) and check_ucl(ucl, incoming_msg['amount']) and \
+                check_distance(geo, last_postcode, incoming_msg['postcode'], txn_time, incoming_msg['transaction_dt']):
             post_code = incoming_msg['postcode']
             txn_time = incoming_msg['transaction_dt']
             data = {
@@ -89,22 +96,33 @@ def execute():
             break
         else:
             # Fraud TXN -> update into card_transaction table
+            member_id = incoming_msg['member_id']
+            amount = incoming_msg['amount']
             post_code = incoming_msg['postcode']
+            pos_id = incoming_msg['pos_id']
             txn_time = incoming_msg['transaction_dt']
-            # TODO
+            status = 'FRAUD'
             data = {
+                b'md:m_id': str(member_id).encode(),
+                b'td:amt': str(amount).encode(),
                 b'st:pc': str(post_code).encode(),
-                b'st:tdt': txn_time.encode()
+                b'td:pos': str(pos_id).encode(),
+                b'st:tdt': txn_time.encode(),
+                b'td:st': status.encode()
             }
-            push_to_hbase(hbase_connection, 'card_transactions_test', data)
+            push_to_hbase(hbase_connection, incoming_msg,'card_transactions_test', data)
             break
-
-        # incoming_msg['distance'] = get_distance(geo, incoming_msg['last_postcode'], incoming_msg['postcode'])
-        # incoming_msg['time_diff'] = get_time_difference(incoming_msg['last_txn_time'],
-        #                                                 incoming_msg['transaction_dt'])
-
 
 if __name__ == '__main__':
     execute()
+    # geo = GEO_Map()
+    # curr_postcode = '19352'
+    # last_postcode = '44814'
+    # curr_txn_time = '28-06-2018 14:57:43'
+    # last_txn_time = b'01-02-2018 04:58:38'
+    # d = get_distance(geo, curr_postcode, last_postcode)
+    # t = get_time_difference(last_txn_time.decode(), curr_txn_time)
+    # res = d/t
+    # print(res)
     # hbase_connection = dao.HBaseDao()
     # print(get_details_from_last_txn(hbase_connection, '348684315090900', 'lookup'))

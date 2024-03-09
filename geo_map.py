@@ -31,7 +31,7 @@ class GEO_Map():
 		return self.map[self.map.A == pos_id ].C.iloc[0]
 
 	def distance(self, lat1, long1, lat2, long2):
-		print(lat1, long1, lat2, long2)
+		#print(lat1, long1, lat2, long2)
 		theta = long1 - long2
 		dist = math.sin(self.deg2rad(lat1)) * math.sin(self.deg2rad(lat2)) + math.cos(self.deg2rad(lat1)) * math.cos(self.deg2rad(lat2)) * math.cos(self.deg2rad(theta))
 		dist = math.acos(dist)
