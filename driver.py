@@ -69,6 +69,7 @@ def execute():
                                                                                str(incoming_msg['card_id']), "lookup")
 
         print("========================", last_postcode, credit_score, ucl, txn_time)
+        print("========================", type(last_postcode), type(credit_score), type(ucl), type(txn_time))
 
         incoming_msg['last_postcode'] = last_postcode
         incoming_msg['credit_score'] = int(credit_score)
