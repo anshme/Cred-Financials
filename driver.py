@@ -53,7 +53,7 @@ def push_to_hbase(hbase_connection, updated_msg):
 
 
 def check_if_fraud(credit_score):
-    if(credit_score < 200):
+    if int(credit_score) < 200:
         return True
     else:
         return False
@@ -73,6 +73,7 @@ def execute():
         incoming_msg['last_txn_time'] = txn_time
         incoming_msg['ucl'] = ucl
         if check_if_fraud(credit_score):
+            print(incoming_msg)
             push_to_hbase(hbase_connection, incoming_msg)
             break
         # incoming_msg['distance'] = get_distance(geo, incoming_msg['last_postcode'], incoming_msg['postcode'])
