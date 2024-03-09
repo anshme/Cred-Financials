@@ -11,3 +11,6 @@ if __name__ == '__main__':
 
     distance = geo.distance(source_lat, source_long, destination_lat, destination_long)
     print(distance)
+
+
+    hbase_connection =

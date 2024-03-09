@@ -1,7 +1,6 @@
 import json
 
 from pyspark.sql import SparkSession
-from pyhocon import ConfigFactory
 from pyspark.sql.functions import udf
 from pyspark.sql.types import StructType, StructField, StringType
 import dao
@@ -25,7 +24,7 @@ def get_spark_session(spark_conf=None):
 
     return spark, spark.sparkContext
 
-def get_last_source(value):
+def get_last_source(value, ):
     rows = hbase_connection.get_data(key=str.encode(value), table='lookup')
     return rows['pc']
 
@@ -55,6 +54,7 @@ if __name__ == '__main__':
     # kafka_conf = conf['kafka']
     kafka_df = get_df_from_kafka(spark=spark)
 
+    sc.broadcast(hbase_connection)
     print("connected to kafka")
 
     schema = StructType([
@@ -81,4 +81,3 @@ if __name__ == '__main__':
     # rows = hbase_connection.get_data(key=b'6544649161377464', table='lookup')
     # print(rows)
 
-    # sc.broadcast(hbase_connection)
