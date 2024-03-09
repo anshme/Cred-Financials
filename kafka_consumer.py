@@ -1,15 +1,14 @@
-from confluent_kafka import Consumer, KafkaException, KafkaError
+from json import loads
+
+from kafka import KafkaConsumer
 import sys
 
 def kafka_consumer(kafka_conf):
-    conf = {
-        'bootstrap.servers': kafka_conf['bootstrap_server'],  # Kafka broker address
-        'group.id': kafka_conf['group_id'],        # Consumer group ID
-        'auto.offset.reset': kafka_conf['offset_reset'],
-        'enable.auto.commit': True,
-        'auto.commit.interval.ms': 1000
-    }
-
-    consumer = Consumer(conf)
-    consumer.subscribe([kafka_conf['topic']])  # Subscribe to one or more topics
+    consumer = KafkaConsumer(
+        kafka_conf['topic'],
+        bootstrap_servers=kafka_conf['bootstrap_server'],
+        auto_offset_reset=kafka_conf['offset_reset'],
+        enable_auto_commit=True,
+        group_id=kafka_conf['group_id'],
+        value_deserializer=lambda x: loads(x.decode('utf-8')))
     return consumer
