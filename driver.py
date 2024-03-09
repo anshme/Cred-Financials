@@ -74,6 +74,7 @@ def execute():
         incoming_msg['credit_score'] = int(credit_score)
         incoming_msg['last_txn_time'] = txn_time
         incoming_msg['ucl'] = ucl
+        print(incoming_msg)
         if check_if_fraud(credit_score):
             print(incoming_msg)
             #push_to_hbase(hbase_connection, incoming_msg)
