@@ -38,14 +38,11 @@ def get_details_from_last_txn(hbase_connection, card_id, table_name):
 def push_to_hbase(hbase_connection, updated_msg):
     post_code = updated_msg['postcode']
     txn_time = updated_msg['transaction_dt']
-    score = updated_msg['credit_score']
-    ucl = updated_msg['ucl']
     data = {
         b'st:pc': str(post_code).encode(),
         b'st:tdt': txn_time.encode()
     }
-    hbase_connection.write_data(bin(updated_msg['card_id']), data, "lookup_test")
-
+    hbase_connection.write_data(updated_msg['card_id'], data, "lookup_test")
 
 
 def check_if_fraud(credit_score):
