@@ -61,7 +61,7 @@ def execute():
                 elif msg.error():
                     raise KafkaException(msg.error())
             else:
-                incoming_msg = json.load(msg.value().decode('utf-8').replace('\"',''))
+                incoming_msg = json.load(msg.value().replace('\"',''))
                 last_postcode, credit_score, txn_time, ucl = get_details_from_last_txn(hbase_connection,
                                                                                        incoming_msg['card_id'],
                                                                                        "lookup")
