@@ -46,7 +46,7 @@ def push_to_hbase(hbase_connection, updated_msg):
         b'bt:score': bin(score),
         b'bt:ucl': ucl
     }
-    hbase_connection.write_data(bin(updated_msg['card_id']), data, "lookup")
+    hbase_connection.write_data(bin(updated_msg['card_id']), data, "lookup_test")
     pass
 
 
@@ -77,7 +77,7 @@ def execute():
         print(incoming_msg)
         if check_if_fraud(credit_score):
             print(incoming_msg)
-            #push_to_hbase(hbase_connection, incoming_msg)
+            push_to_hbase(hbase_connection, incoming_msg)
             break
         break
         # incoming_msg['distance'] = get_distance(geo, incoming_msg['last_postcode'], incoming_msg['postcode'])
