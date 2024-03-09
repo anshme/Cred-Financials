@@ -41,13 +41,13 @@ def push_to_hbase(hbase_connection, updated_msg):
     score = updated_msg['credit_score']
     ucl = updated_msg['ucl']
     data = {
-        b'st:pc': bin(post_code),
+        b'st:pc': post_code,
         b'st:tdt': txn_time,
-        b'bt:score': bin(score),
+        b'bt:score': score,
         b'bt:ucl': ucl
     }
     hbase_connection.write_data(bin(updated_msg['card_id']), data, "lookup_test")
-    pass
+
 
 
 def check_if_fraud(credit_score):
