@@ -42,9 +42,9 @@ def push_to_hbase(hbase_connection, updated_msg):
     ucl = updated_msg['ucl']
     data = {
             b'st:pc': bin(post_code),
-            b'st:tdt': bin(txn_time),
+            b'st:tdt': txn_time,
             b'bt:score': bin(score),
-            b'bt:ucl': bin(ucl)
+            b'bt:ucl': ucl
     }
     hbase_connection.write_data(bin(updated_msg['card_id']), data, "lookup")
     pass
