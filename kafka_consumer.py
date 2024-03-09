@@ -3,6 +3,7 @@ from json import loads
 from kafka import KafkaConsumer
 import sys
 
+
 def kafka_consumer(kafka_conf):
     consumer = KafkaConsumer(
         kafka_conf['topic'],
