@@ -35,8 +35,8 @@ def get_details_from_last_txn(hbase_connection, card_id, table_name):
     return row.get(b'st:pc'), row.get(b'bt:score'), row.get(b'bt:ucl'), row.get(b'st:tdt')
 
 
-def push_to_hbase(hbase_connection, table, data):
-    hbase_connection.write_data(str(updated_msg['card_id']).encode(), data, "lookup_test")
+def push_to_hbase(hbase_connection, updated_msg, table, data):
+    hbase_connection.write_data(str(updated_msg['card_id']).encode(), data, table)
 
 
 def check_if_fraud(credit_score):
@@ -85,7 +85,7 @@ def execute():
                 b'st:pc': str(post_code).encode(),
                 b'st:tdt': txn_time.encode()
             }
-            push_to_hbase(hbase_connection, 'look_test', data)
+            push_to_hbase(hbase_connection, incoming_msg, 'lookup_test', data)
             break
         else:
             # Fraud TXN -> update into card_transaction table
