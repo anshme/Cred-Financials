@@ -58,6 +58,6 @@ class HBaseDao:
 
 	def reconnect(self):
 		self.connect()
-obj = HBaseDao()
-result = obj.get_data('row1', 'my_table')
-print(result)
+# obj = HBaseDao()
+# result = obj.get_data('row1', 'my_table')
+# print(result)
