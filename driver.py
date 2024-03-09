@@ -35,12 +35,28 @@ def get_details_from_last_txn(hbase_connection, card_id, table_name):
     return row.get(b'st:pc'), row.get(b'bt:score'), row.get(b'bt:ucl'), row.get(b'st:tdt')
 
 
-def psuh_to_hbase():
+def push_to_hbase(hbase_connection, updated_msg):
+    post_code = updated_msg['postcode']
+    txn_time = updated_msg['transaction_dt']
+    score = updated_msg['credit_score']
+    ucl = updated_msg['ucl']
+    data = {
+        b'11111111': {  # Assuming 'card_id' is the row key
+            b'st:pc': post_code,
+            b'st:tdt': txn_time,
+            b'bt:score': score,
+            b'bt:ucl': ucl
+        }
+    }
+    hbase_connection.write_data(updated_msg['card_id'], data, "lookup")
     pass
 
 
-def check_if_fraud():
-    pass
+def check_if_fraud(credit_score):
+    if(credit_score < 200):
+        return True
+    else:
+        return False
 
 
 def execute():
@@ -51,15 +67,17 @@ def execute():
     consumer = kafka_consumer(conf['kafka'])
     for msg in consumer:
         incoming_msg = json.loads(msg.value)
-        last_postcode, credit_score, txn_time, ucl = get_details_from_last_txn(hbase_connection, str(incoming_msg['card_id']),"lookup")
+        last_postcode, credit_score, ucl, txn_time = get_details_from_last_txn(hbase_connection, str(incoming_msg['card_id']),"lookup")
         incoming_msg['last_postcode'] = last_postcode
         incoming_msg['credit_score'] = int(credit_score)
         incoming_msg['last_txn_time'] = txn_time
         incoming_msg['ucl'] = ucl
+        if check_if_fraud(credit_score):
+            push_to_hbase(hbase_connection, incoming_msg)
+            break
         # incoming_msg['distance'] = get_distance(geo, incoming_msg['last_postcode'], incoming_msg['postcode'])
         # incoming_msg['time_diff'] = get_time_difference(incoming_msg['last_txn_time'],
         #                                                 incoming_msg['transaction_dt'])
-        print(incoming_msg)
 
 
 if __name__ == '__main__':
