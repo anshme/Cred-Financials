@@ -11,5 +11,5 @@ def kafka_consumer(kafka_conf):
     }
 
     consumer = Consumer(conf)
-    consumer.subscribe(kafka_conf['topic'])  # Subscribe to one or more topics
+    consumer.subscribe([kafka_conf['topic']])  # Subscribe to one or more topics
     return consumer
