@@ -29,7 +29,7 @@ def get_distance(geo, src_postcode, dest_postcode):
 
 def get_details_from_last_txn(hbase_connection, card_id, table_name):
     row = hbase_connection.get_data(key=str.encode(card_id), table=table_name)
-    return row['pc'], row['score'], row['tdt'], row['ucl']
+    return row
 
 
 def psuh_to_hbase():
@@ -78,4 +78,4 @@ def execute():
 if __name__ == '__main__':
     # execute()
     hbase_connection = dao.HBaseDao()
-    get_details_from_last_txn(hbase_connection,'348684315090900','lookup')
+    print(get_details_from_last_txn(hbase_connection,'348684315090900','lookup'))
