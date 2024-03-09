@@ -9,6 +9,9 @@ import dao
 from geo_map import GEO_Map
 from kafka_consumer import kafka_consumer
 
+speed_threshold = 0.25
+score_threshold = 200
+
 def get_time_difference(timestamp1, timestamp2):
     format = "%d-%m-%Y %H:%M:%S"
     datetime1 = datetime.strptime(timestamp1, format)
@@ -36,7 +39,7 @@ def check_if_fraud():
     pass
 
 def execute():
-    hbase_connection = dao.HBaseDao()
+    # hbase_connection = dao.HBaseDao()
     geo = GEO_Map()
     conf = ConfigFactory.parse_file('application.conf')
 
