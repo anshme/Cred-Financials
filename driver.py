@@ -74,4 +74,5 @@ def execute():
 
 if __name__ == '__main__':
     # execute()
-    get_details_from_last_txn('348684315090900')
+    hbase_connection = dao.HBaseDao()
+    get_details_from_last_txn(hbase_connection,'348684315090900','lookup')
