@@ -7,8 +7,7 @@ def kafka_consumer(kafka_conf):
         'group.id': kafka_conf['group_id'],        # Consumer group ID
         'auto.offset.reset': kafka_conf['offset_reset'],
         'enable.auto.commit': True,
-        'auto.commit.interval.ms': 1000,
-        'poll.interval.ms': 100
+        'auto.commit.interval.ms': 1000
     }
 
     consumer = Consumer(conf)
