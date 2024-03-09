@@ -32,7 +32,7 @@ def get_distance(geo, src_postcode, dest_postcode):
 
 def get_details_from_last_txn(hbase_connection, card_id, table_name):
     row = hbase_connection.get_data(key=str.encode(card_id), table=table_name)
-    print(row)
+    return row.get(b'st:pc'), row.get(b'bt:score'), row.get(b'bt:ucl'), row.get(b'st:tdt')
 
 
 def psuh_to_hbase():
@@ -53,7 +53,7 @@ def execute():
         # print(type(msg.value), type(msg))
         incoming_msg = json.loads(msg.value)
         # print(incoming_msg['card_id'])
-        print(get_details_from_last_txn(hbase_connection,incoming_msg['card_id'],"lookup"))
+        print(get_details_from_last_txn(hbase_connection,str(incoming_msg['card_id']),"lookup"))
         # last_postcode, credit_score, txn_time, ucl = get_details_from_last_txn(hbase_connection,
         #                                                                        incoming_msg['card_id'],
         #                                                                        "lookup")
