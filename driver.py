@@ -50,7 +50,7 @@ def execute():
 
     consumer = kafka_consumer(conf['kafka'])
     for msg in consumer:
-        incoming_msg = msg.value
+        incoming_msg = json.load(msg.value)
         last_postcode, credit_score, txn_time, ucl = get_details_from_last_txn(hbase_connection,
                                                                                incoming_msg['card_id'],
                                                                                "lookup")
