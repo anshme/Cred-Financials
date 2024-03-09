@@ -54,7 +54,7 @@ class HBaseDao:
 			except Exception as e:
 				error = e
 				self.reconnect()
-				raise Exception(key + str(e))
+				raise Exception(key + str(error))
 
 	def reconnect(self):
 		self.connect()
