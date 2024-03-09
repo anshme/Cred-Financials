@@ -41,12 +41,10 @@ def push_to_hbase(hbase_connection, updated_msg):
     score = updated_msg['credit_score']
     ucl = updated_msg['ucl']
     data = {
-        b'11111111': {  # Assuming 'card_id' is the row key
             b'st:pc': post_code,
             b'st:tdt': txn_time,
             b'bt:score': score,
             b'bt:ucl': ucl
-        }
     }
     hbase_connection.write_data(updated_msg['card_id'], data, "lookup")
     pass
