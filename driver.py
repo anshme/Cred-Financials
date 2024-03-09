@@ -51,7 +51,7 @@ def push_to_hbase(hbase_connection, updated_msg):
 
 
 def check_if_fraud(credit_score):
-    if int(credit_score) < 200:
+    if int(credit_score) < 1000:
         return True
     else:
         return False
