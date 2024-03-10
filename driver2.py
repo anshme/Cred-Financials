@@ -90,9 +90,9 @@ class CredFinance:
             b'st:pc': str(post_code).encode(),
             b'st:tdt': txn_time.encode()
         }
-        #TODO writing to test table
-        # self.push_to_hbase(enriched_message['card_id'], self.conf['hbase']['lookup_table'], data_for_lookup)
-        self.push_to_hbase(enriched_message['card_id'], "lookup_test", data_for_lookup)
+        print("Pushing to Lookup for " + enriched_message)
+        self.push_to_hbase(enriched_message['card_id'], self.conf['hbase']['lookup_table'], data_for_lookup)
+
 
     def push_to_txn_table(self, enriched_msg, status):
         member_id = enriched_msg['member_id']
@@ -108,6 +108,7 @@ class CredFinance:
             b'td:tdt': txn_time.encode(),
             b'td:st': status.encode()
         }
+        print("Pushing to TXN_table " + status + " " + enriched_msg)
         self.push_to_hbase(enriched_msg['card_id'], self.conf['hbase']['card_txn_table'], data_for_txn_table)
 
     def process_genuine_txn(self, enriched_msg):
@@ -136,11 +137,9 @@ class CredFinance:
 
     def execute(self):
         consumer = kafka_consumer(self.conf['kafka'])
-        count = 0
         for msg in consumer:
             incoming_msg = json.loads(msg.value)
             enrich_message = self.get_enrich_message(incoming_msg)
-            print(enrich_message)
             if enrich_message is None:
                 self.process_genuine_txn(incoming_msg)
                 print("New card_id incoming")
@@ -153,14 +152,9 @@ class CredFinance:
                 else:
                     self.process_genuine_txn(incoming_msg)
                     print("Genuine Txn")
-            count += 1
-            if count == 20:
-                break
 
 
 if __name__ == '__main__':
     cred = CredFinance()
     cred.get_connections()
     cred.execute()
-    # incoming_message = {'card_id': 11111111111111}
-    # res = cred.get_enrich_message(incoming_message)
