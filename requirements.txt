@@ -1,5 +1,4 @@
 pandas
-happybase
-confluent_kafka
 pyhocon
 kafka-python==2.0.2
+happybase
