@@ -90,15 +90,14 @@ class CredFinance:
             b'st:pc': str(post_code).encode(),
             b'st:tdt': txn_time.encode()
         }
-        self.push_to_hbase(enriched_message['card'], self.conf['hbase']['lookup_table'], data_for_lookup)
+        self.push_to_hbase(enriched_message['card_id'], self.conf['hbase']['lookup_table'], data_for_lookup)
 
-    def push_to_txn_table(self, enriched_msg):
+    def push_to_txn_table(self, enriched_msg, status):
         member_id = enriched_msg['member_id']
         amount = enriched_msg['amount']
         post_code = enriched_msg['postcode']
         pos_id = enriched_msg['pos_id']
         txn_time = enriched_msg['transaction_dt']
-        status = 'FRAUD'
         data_for_txn_table = {
             b'md:m_id': str(member_id).encode(),
             b'td:amt': str(amount).encode(),
@@ -107,24 +106,27 @@ class CredFinance:
             b'st:tdt': txn_time.encode(),
             b'td:st': status.encode()
         }
-        self.push_to_hbase(enriched_msg['card'], self.conf['hbase']['card_txn_table'], data_for_txn_table)
+        self.push_to_hbase(enriched_msg['card_id'], self.conf['hbase']['card_txn_table'], data_for_txn_table)
 
     def process_genuine_txn(self, enriched_msg):
         self.push_to_lookup(enriched_msg)
-        self.push_to_txn_table(enriched_msg)
+        self.push_to_txn_table(enriched_msg, 'GENUINE')
 
     def process_fraud_txn(self, enriched_msg):
-        self.process_genuine_txn(enriched_msg)
+        self.push_to_txn_table(enriched_msg, 'FRAUD')
 
     def get_enrich_message(self, incoming_message):
         last_postcode, credit_score, ucl, txn_time = self.get_details_from_last_txn(str(incoming_message['card_id']),
                                                                                     self.conf['hbase']['lookup_table'])
 
-        incoming_message['last_postcode'] = last_postcode
-        incoming_message['credit_score'] = credit_score
-        incoming_message['last_txn_time'] = txn_time
-        incoming_message['ucl'] = ucl
-        return incoming_message
+        if last_postcode is not None and credit_score is not None and ucl is not None and txn_time is not None:
+            incoming_message['last_postcode'] = last_postcode
+            incoming_message['credit_score'] = int(credit_score)
+            incoming_message['last_txn_time'] = txn_time
+            incoming_message['ucl'] = ucl
+            return incoming_message
+        else:
+            return None
 
     def get_connections(self):
         self.hbase_connection = dao.HBaseDao()
@@ -135,14 +137,23 @@ class CredFinance:
 
         for msg in consumer:
             incoming_msg = json.loads(msg.value)
+            incoming_msg['card_id'] = 1111111111
             enrich_message = self.get_enrich_message(incoming_msg)
-
-            if self.check_if_fraud(enrich_message['credit_score'], enrich_message['ucl'], enrich_message['amount'],
+            if enrich_message is None:
+                self.process_genuine_txn(incoming_msg)
+                print("New card_id incoming")
+                break
+            else:
+                if self.check_if_fraud(enrich_message['credit_score'], enrich_message['ucl'], enrich_message['amount'],
                                    enrich_message['last_postcode'], enrich_message['postcode'],
                                    enrich_message['last_txn_time'], enrich_message['transaction_dt']):
-                self.process_fraud_txn(incoming_msg)
-            else:
-                self.process_genuine_txn(incoming_msg)
+                    self.process_fraud_txn(incoming_msg)
+                    print("Fraud txn")
+                    break
+                else:
+                    self.process_genuine_txn(incoming_msg)
+                    print("Genuine Txn")
+                    break
 
 
 if __name__ == '__main__':
