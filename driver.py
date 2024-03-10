@@ -56,7 +56,7 @@ def check_ucl(ucl, amount):
 
 def check_distance(geo, last_postcode, curr_postcode, last_tdt, curr_tdt):
     distance = get_distance(geo, last_postcode, curr_postcode)
-    time = get_time_difference(last_tdt.decode(), curr_tdt)
+    time = get_time_difference(last_tdt, curr_tdt)
     speed = distance/time
 
     if speed > speed_threshold:

@@ -122,9 +122,9 @@ class CredFinance:
                                                                                     self.conf['hbase']['lookup_table'])
 
         if last_postcode is not None and credit_score is not None and ucl is not None and txn_time is not None:
-            incoming_message['last_postcode'] = last_postcode
+            incoming_message['last_postcode'] = last_postcode.decode()
             incoming_message['credit_score'] = int(credit_score)
-            incoming_message['last_txn_time'] = txn_time
+            incoming_message['last_txn_time'] = txn_time.decode()
             incoming_message['ucl'] = ucl
             return incoming_message
         else:
