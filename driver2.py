@@ -67,6 +67,8 @@ class CredFinance:
     def check_if_fraud_speed(self, last_postcode, curr_postcode, last_tdt, curr_tdt):
         distance = self.get_distance(last_postcode, curr_postcode)
         time = self.get_time_difference(last_tdt, curr_tdt)
+        if time == 0:
+            return False
         speed = distance / time
 
         if speed > self.speed_threshold:
