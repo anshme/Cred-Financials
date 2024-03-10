@@ -140,6 +140,7 @@ class CredFinance:
     def execute(self):
         consumer = kafka_consumer(self.conf['kafka'])
         for msg in consumer:
+            start = datetime.now()
             incoming_msg = json.loads(msg.value)
             enrich_message = self.get_enrich_message(incoming_msg)
             if enrich_message is None:
@@ -155,6 +156,8 @@ class CredFinance:
                     self.process_genuine_txn(incoming_msg)
                     print("Genuine Txn")
 
+            end = datetime.now()
+            print("----------time taken" + str(end - start))
 
 if __name__ == '__main__':
     cred = CredFinance()
