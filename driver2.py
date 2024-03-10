@@ -144,7 +144,7 @@ class CredFinance:
 
 
 if __name__ == '__main__':
-    cred = CredFinance
+    cred = CredFinance()
     # cred.execute()
     incoming_message = {'card_id': 11111111111111}
     res = cred.get_enrich_message(incoming_message)
