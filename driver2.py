@@ -101,9 +101,9 @@ class CredFinance:
         data_for_txn_table = {
             b'md:m_id': str(member_id).encode(),
             b'td:amt': str(amount).encode(),
-            b'st:pc': str(post_code).encode(),
+            b'td:pc': str(post_code).encode(),
             b'td:pos': str(pos_id).encode(),
-            b'st:tdt': txn_time.encode(),
+            b'td:tdt': txn_time.encode(),
             b'td:st': status.encode()
         }
         self.push_to_hbase(enriched_msg['card_id'], self.conf['hbase']['card_txn_table'], data_for_txn_table)
