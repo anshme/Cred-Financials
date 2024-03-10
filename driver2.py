@@ -38,10 +38,10 @@ class CredFinance:
         return time_difference_seconds
 
     def get_distance(self, src_postcode, des_postcode):
-        source_lat = self.geo.get_lat(src_postcode)
-        source_long = self.geo.get_long(src_postcode)
-        destination_lat = self.geo.get_lat(des_postcode)
-        destination_long = self.geo.get_long(des_postcode)
+        source_lat = self.geo.get_lat(str(src_postcode))
+        source_long = self.geo.get_long(str(src_postcode))
+        destination_lat = self.geo.get_lat(str(des_postcode))
+        destination_long = self.geo.get_long(str(des_postcode))
         distance = self.geo.distance(source_lat, source_long, destination_lat, destination_long)
         return distance
 
