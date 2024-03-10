@@ -75,9 +75,10 @@ class CredFinance:
             return False
 
     def check_if_fraud(self, credit_score, ucl, amount, last_postcode, curr_postcode, last_tdt, curr_tdt):
-        if self.check_if_fraud_score(credit_score) or self.check_if_fraud_ucl(ucl, amount) or self.check_if_fraud_speed(last_postcode,
-                                                                                                                          curr_postcode,
-                                                                                                                          last_tdt, curr_tdt):
+        if self.check_if_fraud_score(credit_score) or self.check_if_fraud_ucl(ucl, amount) or self.check_if_fraud_speed(
+                last_postcode,
+                curr_postcode,
+                last_tdt, curr_tdt):
             return True
         else:
             return False
@@ -118,6 +119,7 @@ class CredFinance:
     def get_enrich_message(self, incoming_message):
         last_postcode, credit_score, ucl, txn_time = self.get_details_from_last_txn(str(incoming_message['card_id']),
                                                                                     self.conf['hbase']['lookup_table'])
+
         incoming_message['last_postcode'] = last_postcode
         incoming_message['credit_score'] = int(credit_score)
         incoming_message['last_txn_time'] = txn_time
@@ -143,4 +145,7 @@ class CredFinance:
 
 if __name__ == '__main__':
     cred = CredFinance
-    cred.execute()
+    # cred.execute()
+
+    res = cred.get_enrich_message({"card_id": "11111111111111"})
+    print(res)
