@@ -134,26 +134,25 @@ class CredFinance:
 
     def execute(self):
         consumer = kafka_consumer(self.conf['kafka'])
-
+        count = 0
         for msg in consumer:
             incoming_msg = json.loads(msg.value)
-            incoming_msg['card_id'] = 1111111111
             enrich_message = self.get_enrich_message(incoming_msg)
             if enrich_message is None:
                 self.process_genuine_txn(incoming_msg)
                 print("New card_id incoming")
-                break
             else:
                 if self.check_if_fraud(enrich_message['credit_score'], enrich_message['ucl'], enrich_message['amount'],
                                    enrich_message['last_postcode'], enrich_message['postcode'],
                                    enrich_message['last_txn_time'], enrich_message['transaction_dt']):
                     self.process_fraud_txn(incoming_msg)
                     print("Fraud txn")
-                    break
                 else:
                     self.process_genuine_txn(incoming_msg)
                     print("Genuine Txn")
-                    break
+            count += 1
+            if count == 20:
+                break
 
 
 if __name__ == '__main__':
