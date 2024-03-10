@@ -121,7 +121,7 @@ class CredFinance:
                                                                                     self.conf['hbase']['lookup_table'])
 
         incoming_message['last_postcode'] = last_postcode
-        incoming_message['credit_score'] = int(credit_score)
+        incoming_message['credit_score'] = credit_score
         incoming_message['last_txn_time'] = txn_time
         incoming_message['ucl'] = ucl
         return incoming_message
@@ -148,6 +148,6 @@ class CredFinance:
 if __name__ == '__main__':
     cred = CredFinance()
     cred.get_connections()
-    incoming_message = {'card_id': "11111111111111"}
+    incoming_message = {'card_id': 11111111111111}
     res = cred.get_enrich_message(incoming_message)
     print(res)
