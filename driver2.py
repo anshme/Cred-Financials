@@ -90,7 +90,9 @@ class CredFinance:
             b'st:pc': str(post_code).encode(),
             b'st:tdt': txn_time.encode()
         }
-        self.push_to_hbase(enriched_message['card_id'], self.conf['hbase']['lookup_table'], data_for_lookup)
+        #TODO writing to test table
+        # self.push_to_hbase(enriched_message['card_id'], self.conf['hbase']['lookup_table'], data_for_lookup)
+        self.push_to_hbase(enriched_message['card_id'], "lookup_test", data_for_lookup)
 
     def push_to_txn_table(self, enriched_msg, status):
         member_id = enriched_msg['member_id']
@@ -138,6 +140,7 @@ class CredFinance:
         for msg in consumer:
             incoming_msg = json.loads(msg.value)
             enrich_message = self.get_enrich_message(incoming_msg)
+            print(enrich_message)
             if enrich_message is None:
                 self.process_genuine_txn(incoming_msg)
                 print("New card_id incoming")
