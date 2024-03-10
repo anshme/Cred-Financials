@@ -90,7 +90,8 @@ class CredFinance:
             b'st:pc': str(post_code).encode(),
             b'st:tdt': txn_time.encode()
         }
-        print("Pushing to Lookup for " + enriched_message)
+        print("Pushing to Lookup for ")
+        print(enriched_message)
         self.push_to_hbase(enriched_message['card_id'], self.conf['hbase']['lookup_table'], data_for_lookup)
 
 
@@ -108,7 +109,8 @@ class CredFinance:
             b'td:tdt': txn_time.encode(),
             b'td:st': status.encode()
         }
-        print("Pushing to TXN_table " + status + " " + enriched_msg)
+        print("Pushing to TXN_table " + status + " ")
+        print(enriched_msg)
         self.push_to_hbase(enriched_msg['card_id'], self.conf['hbase']['card_txn_table'], data_for_txn_table)
 
     def process_genuine_txn(self, enriched_msg):
