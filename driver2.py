@@ -126,9 +126,11 @@ class CredFinance:
         incoming_message['ucl'] = ucl
         return incoming_message
 
-    def execute(self):
+    def get_connections(self):
         self.hbase_connection = dao.HBaseDao()
         self.geo = GEO_Map()
+
+    def execute(self):
         consumer = kafka_consumer(self.conf['kafka'])
 
         for msg in consumer:
@@ -145,7 +147,7 @@ class CredFinance:
 
 if __name__ == '__main__':
     cred = CredFinance()
-    # cred.execute()
+    cred.get_connections()
     incoming_message = {'card_id': 11111111111111}
     res = cred.get_enrich_message(incoming_message)
     print(res)
