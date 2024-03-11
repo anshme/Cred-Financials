@@ -57,7 +57,7 @@ class CredFinance:
         self.hbase_connection.write_data(str(key).encode(), data, table)
 
     def check_if_fraud_score(self, credit_score):
-        #checking if the credit score is more than the threshold
+        #checking if the credit score is less than the threshold
         if int(credit_score) < self.score_threshold:
             return True
         else:

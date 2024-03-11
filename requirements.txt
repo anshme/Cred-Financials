@@ -1,3 +1,5 @@
+#Make sure to install necessary ubuntu packages from project_packages.sh file Before running this file.
+#To run : pip3 install -r requirements.txt
 pandas
 pyhocon
 kafka-python==2.0.2
